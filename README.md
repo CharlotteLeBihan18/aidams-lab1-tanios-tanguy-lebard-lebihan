@@ -1,42 +1,79 @@
-# Lab 1 : Steel Plants
+# aidams-lab1-tanios-tanguy-lebard-lebihan
 
-## Part 1 — Loading the data
+Geospatial Data Analysis Lab — Steel Plants Dataset (AIDAMS)
 
-Pretty straightforward: we read in the plant data and the capacity sheet
-from the Excel file, cleaned u
-p the capacity column (some values weren't
-numeric), and merged the two on plant ID. Ended up with **1,293 plants** and
-45 columns to work with.
+## Groupe
 
-## Part 2 — Exploring the data
+| # | Nom complet | Student ID |
+|---|---|---|
+| 1 | Charlotte Le Bihan | B00818310 |
+| 2 | Ines Lebard | B00820964 |
+| 3 | Camille Tanguy | B00821659 |
+| 4 | Oceane Tanios | B00822694 |
 
-Some things that stood out:
+## Description
 
-- 13 out of the 45 columns have missing values, about 7,200 missing cells
-  total. Mostly stuff like alternate names, other-language fields, and a
-  few of the secondary capacity columns (coking, sinter, etc.) — nothing
-  that affects the main analysis.
-- Average plant capacity is around 2,840 ttpa, ranging all the way from 0 up
-  to 25,499.
-- Plant age averages about 39 years, but the max is 287, which is almost
-  certainly a data issue rather than an actual 287-year-old plant. Worth
-  keeping in mind if we use this column later.
-- There are 1,069 different owners in the dataset. Nucor Corp has the most
-  plants (13), followed by Cleveland-Cliffs (12) and Nippon Steel (10).
-- Total global capacity comes out to about 3.67 million ttpa. By capacity
-  (not plant count), ArcelorMittal Nippon Steel India leads the pack at
-  86,500 ttpa.
+Ce projet analyse le dataset **Global Iron and Steel Tracker** (Global Energy Monitor) :
 
-## Part 3 — Putting it on a map
+- Exploration et analyse statistique des usines sidérurgiques (localisation, capacité, propriétaires)
+- Visualisations géospatiales interactives avec Plotly
+- Fusion des données d'exposition socio-économique **LitPop** (ETH Zurich — population et valeur d'actifs) avec les localisations des usines
+- Agrégation des indicateurs au niveau des entreprises
+- Dashboard interactif avec Streamlit
 
-We split the `Coordinates` column into separate latitude/longitude columns
-and made three maps with Plotly:
+## Structure du projet
 
-1. A basic world map with one dot per plant, colored by country
-2. The same map but with dots sized by capacity and colored by owner, so
-   you can spot the big players at a glance
-3. A density map weighted by capacity — this one makes it really obvious
-   that East Asia (China especially) has way more steel production packed
-   in than anywhere else, with Europe and the rest of South/East Asia
-   trailing behind
+```
+.
+├── lab_1.ipynb                                          # Notebook principal (analyse complète)
+├── app.py                                                # Dashboard Streamlit
+├── data/                                                 # Données steel plants
+├── litpop/                                               # Échantillons LitPop (.hdf5)
+│   ├── LitPop_pc_300_arcsec_CHN_v1.hdf5
+│   ├── LitPop_pc_300_arcsec_IND_v1.hdf5
+│   └── LitPop_pc_300_arcsec_JPN_v1.hdf5
+├── Plant-level_data_Global_Iron_and_Steel_Tracker...xlsx # Dataset source
+├── requirements.txt                                      # Dépendances Python
+└── README.md
+```
 
+## Installation
+
+Ce projet utilise [`uv`](https://github.com/astral-sh/uv) pour la gestion de l'environnement virtuel.
+
+```bash
+# Créer et activer l'environnement virtuel
+uv venv
+source .venv/bin/activate
+
+# Installer les dépendances
+uv pip install -r requirements.txt
+```
+
+Dépendances principales : `pandas`, `numpy`, `plotly`, `matplotlib`, `openpyxl`, `h5py`, `tables`, `shapely`, `nbformat`, `streamlit`.
+
+## Données requises
+
+1. **Steel plants** : télécharger le fichier plant-level depuis le [Global Iron and Steel Tracker](https://globalenergymonitor.org/projects/global-iron-steel-tracker) et le placer à la racine du projet.
+2. **LitPop (exposure/population)** : échantillons disponibles sur Moodle, à placer dans le dossier `litpop/`.
+
+## Utilisation
+
+### Notebook
+
+Ouvrir `lab_1.ipynb` dans VS Code ou Jupyter, sélectionner le kernel `.venv`, puis exécuter les cellules dans l'ordre (Parties 1 à 6).
+
+### Dashboard
+
+```bash
+streamlit run app.py
+```
+
+## Lien Streamlit Cloud (bonus)
+
+_À compléter si déployé._
+
+## Notes de développement
+
+- Environnement géré avec `uv` (`pyproject.toml` + `uv.lock`).
+- `.venv/` et fichiers de données volumineux sont exclus via `.gitignore`.
