@@ -1,79 +1,65 @@
-# aidams-lab1-tanios-tanguy-lebard-lebihan
+# Global Iron and Steel Plants — Geospatial Analysis
 
-Geospatial Data Analysis Lab — Steel Plants Dataset (AIDAMS)
+A data analysis lab that explores the location, capacity, and ownership of steel plants worldwide using the Global Energy Monitor dataset. We clean and map the data, link each plant to a local economic exposure score (LitPop), aggregate results by company, and present everything in an interactive Streamlit dashboard.
 
-## Groupe
+**Live dashboard →** https://aidams-lab1-tanios-tanguy-lebard-lebihan.streamlit.app
 
-| # | Nom complet | Student ID |
-|---|---|---|
-| 1 | Charlotte Le Bihan | B00818310 |
-| 2 | Ines Lebard | B00820964 |
-| 3 | Camille Tanguy | B00821659 |
-| 4 | Oceane Tanios | B00822694 |
+---
 
-## Description
+## Team
 
-Ce projet analyse le dataset **Global Iron and Steel Tracker** (Global Energy Monitor) :
+| Name | Student ID |
+|---|---|
+| Charlotte Le Bihan | B00818310 |
+| Ines Lebard | B00820964 |
+| Camille Tanguy | B00821659 |
+| Oceane Tanios | B00822694 |
 
-- Exploration et analyse statistique des usines sidérurgiques (localisation, capacité, propriétaires)
-- Visualisations géospatiales interactives avec Plotly
-- Fusion des données d'exposition socio-économique **LitPop** (ETH Zurich — population et valeur d'actifs) avec les localisations des usines
-- Agrégation des indicateurs au niveau des entreprises
-- Dashboard interactif avec Streamlit
+---
 
-## Structure du projet
+## What's in this repo
 
-```
-.
-├── lab_1.ipynb                                          # Notebook principal (analyse complète)
-├── app.py                                                # Dashboard Streamlit
-├── data/                                                 # Données steel plants
-├── litpop/                                               # Échantillons LitPop (.hdf5)
-│   ├── LitPop_pc_300_arcsec_CHN_v1.hdf5
-│   ├── LitPop_pc_300_arcsec_IND_v1.hdf5
-│   └── LitPop_pc_300_arcsec_JPN_v1.hdf5
-├── Plant-level_data_Global_Iron_and_Steel_Tracker...xlsx # Dataset source
-├── requirements.txt                                      # Dépendances Python
-└── README.md
-```
+| File | What it does |
+|---|---|
+| `lab_1.ipynb` | Main analysis notebook (Parts 1–6 + Bonus) |
+| `app.py` | Streamlit dashboard |
+| `requirements.txt` | Python dependencies |
+| `litpop/` | LitPop exposure data for China, India, Japan |
+| `*.csv` | Pre-computed outputs used by the dashboard |
 
-## Installation
+---
 
-Ce projet utilise [`uv`](https://github.com/astral-sh/uv) pour la gestion de l'environnement virtuel.
+## Prerequisites
+
+- Python 3.12 or later
+- The steel plants Excel file from [Global Iron and Steel Tracker](https://globalenergymonitor.org/projects/global-iron-steel-tracker) placed in the project folder
+- The `litpop/` folder with the three `.hdf5` files (provided on Moodle)
+
+---
+
+## Run locally
 
 ```bash
-# Créer et activer l'environnement virtuel
-uv venv
-source .venv/bin/activate
+# 1. Clone the repo
+git clone https://github.com/CharlotteLeBihan18/aidams-lab1-tanios-tanguy-lebard-lebihan.git
+cd aidams-lab1-tanios-tanguy-lebard-lebihan
 
-# Installer les dépendances
-uv pip install -r requirements.txt
-```
+# 2. Create a virtual environment and install dependencies
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+pip install openpyxl h5py tables  # needed to read the raw data files
 
-Dépendances principales : `pandas`, `numpy`, `plotly`, `matplotlib`, `openpyxl`, `h5py`, `tables`, `shapely`, `nbformat`, `streamlit`.
+# 3. Open the notebook
+jupyter notebook lab_1.ipynb
 
-## Données requises
-
-1. **Steel plants** : télécharger le fichier plant-level depuis le [Global Iron and Steel Tracker](https://globalenergymonitor.org/projects/global-iron-steel-tracker) et le placer à la racine du projet.
-2. **LitPop (exposure/population)** : échantillons disponibles sur Moodle, à placer dans le dossier `litpop/`.
-
-## Utilisation
-
-### Notebook
-
-Ouvrir `lab_1.ipynb` dans VS Code ou Jupyter, sélectionner le kernel `.venv`, puis exécuter les cellules dans l'ordre (Parties 1 à 6).
-
-### Dashboard
-
-```bash
+# 4. Run the dashboard
 streamlit run app.py
 ```
 
-## Lien Streamlit Cloud (bonus)
+---
 
-_À compléter si déployé._
+## Data sources
 
-## Notes de développement
-
-- Environnement géré avec `uv` (`pyproject.toml` + `uv.lock`).
-- `.venv/` et fichiers de données volumineux sont exclus via `.gitignore`.
+- **Steel plants:** Global Energy Monitor — [Global Iron and Steel Tracker](https://globalenergymonitor.org/projects/global-iron-steel-tracker), June 2026
+- **LitPop:** ETH Zurich Research Collection — socio-economic exposure data at 300 arc-second resolution
