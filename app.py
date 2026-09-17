@@ -1,17 +1,21 @@
+# Streamlit dashboard for AIDAMS Lab 1 (Part 6)
+# Run with: streamlit run app.py
+
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+# Parts 1/4/5 export their processed data here (see data/README.md)
 DATA_DIR = Path(__file__).parent / "data"
-PLANTS_FILE = DATA_DIR / "plants_with_exposure.csv"
-COMPANY_FILE = DATA_DIR / "company_aggregates.csv"
+PLANTS_FILE = DATA_DIR / "plants_with_exposure.csv"   # Part 4 output
+COMPANY_FILE = DATA_DIR / "company_aggregates.csv"    # Part 5 output
 
 CAPACITY_COL = "Nominal crude steel capacity (ttpa)"
 
 
-# Data loading (real exports if available, otherwise mock data for dev/testing)
+# Data loading: use real exports if present, else mock data with the same schema
 
 
 def _generate_mock_plants(n: int = 60, seed: int = 42) -> pd.DataFrame:
@@ -48,6 +52,7 @@ def _generate_mock_plants(n: int = 60, seed: int = 42) -> pd.DataFrame:
 
 
 def _company_aggregates_from_plants(plants: pd.DataFrame) -> pd.DataFrame:
+    # Fallback for when company_aggregates.csv isn't exported yet
     agg = plants.groupby("Owner").agg(
         num_plants=("GEM plant ID", "count"),
         total_capacity_ttpa=(CAPACITY_COL, "sum"),
@@ -102,9 +107,9 @@ if using_mock:
 
 # Sidebar filters
 
-
 st.sidebar.header("Filters")
 
+# Empty selection = no filter applied (checked below)
 owner_options = sorted(plants["Owner"].dropna().unique())
 selected_owners = st.sidebar.multiselect("Company", owner_options, default=[])
 
@@ -123,6 +128,7 @@ capacity_range = st.sidebar.slider(
     value=(cap_min, cap_max),
 )
 
+# All charts/tables below read from this single filtered dataframe
 filtered = plants.copy()
 if selected_owners:
     filtered = filtered[filtered["Owner"].isin(selected_owners)]
@@ -137,7 +143,6 @@ filtered = filtered[
 
 # KPI metrics
 
-
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Plants shown", f"{len(filtered):,}")
 col2.metric("Total capacity (ttpa)", f"{filtered[CAPACITY_COL].sum():,.0f}")
@@ -145,13 +150,13 @@ col3.metric("Companies", f"{filtered['Owner'].nunique():,}")
 col4.metric("Countries", f"{filtered['Country/area'].nunique():,}")
 
 
-# Main content: tabs for plant-level vs company-level views
-
+# Main content
 
 insights_tab, plant_tab, company_tab, table_tab = st.tabs(
     ["EDA insights", "Plant map", "Company map", "Data table"]
 )
 
+# Tab 1: EDA insights (Part 2 questions as live charts)
 with insights_tab:
     st.caption(
         "Summary of the exploratory analysis (Part 2), computed live from the "
@@ -219,6 +224,7 @@ with insights_tab:
             fig.update_layout(height=350)
             st.plotly_chart(fig, use_container_width=True)
 
+# Tab 2: Plant map (one dot per plant, size = capacity)
 with plant_tab:
     color_metric = st.radio(
         "Color plants by",
@@ -244,13 +250,14 @@ with plant_tab:
                 "Latitude": False,
                 "Longitude": False,
             },
-            mapbox_style="open-street-map",
+            mapbox_style="open-street-map",  # no API token needed
             zoom=1,
             height=600,
         )
         fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
         st.plotly_chart(fig, use_container_width=True)
 
+# Tab 3: Company map (one dot per company, at Part 5's centroid)
 with company_tab:
     if companies.empty:
         st.warning("No company aggregates available.")
@@ -278,6 +285,7 @@ with company_tab:
         fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
         st.plotly_chart(fig, use_container_width=True)
 
+# Tab 4: Data table
 with table_tab:
     st.dataframe(filtered, use_container_width=True)
 
