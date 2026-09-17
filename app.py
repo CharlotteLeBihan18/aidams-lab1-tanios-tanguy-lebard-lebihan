@@ -148,7 +148,76 @@ col4.metric("Countries", f"{filtered['Country/area'].nunique():,}")
 # Main content: tabs for plant-level vs company-level views
 
 
-plant_tab, company_tab, table_tab = st.tabs(["Plant map", "Company map", "Data table"])
+insights_tab, plant_tab, company_tab, table_tab = st.tabs(
+    ["EDA insights", "Plant map", "Company map", "Data table"]
+)
+
+with insights_tab:
+    st.caption(
+        "Summary of the exploratory analysis (Part 2), computed live from the "
+        "currently filtered plants so it updates as you change the sidebar filters."
+    )
+
+    if filtered.empty:
+        st.warning("No plants match the current filters.")
+    else:
+        left, right = st.columns(2)
+
+        with left:
+            top_countries = (
+                filtered.groupby("Country/area")["GEM plant ID"]
+                .count()
+                .sort_values(ascending=False)
+                .head(10)
+                .rename("Plants")
+                .reset_index()
+            )
+            fig = px.bar(
+                top_countries,
+                x="Plants",
+                y="Country/area",
+                orientation="h",
+                title="Top countries by number of plants",
+            )
+            fig.update_layout(yaxis=dict(autorange="reversed"), height=350)
+            st.plotly_chart(fig, use_container_width=True)
+
+            top_owners_capacity = (
+                filtered.groupby("Owner")[CAPACITY_COL]
+                .sum()
+                .sort_values(ascending=False)
+                .head(10)
+                .rename("Total capacity (ttpa)")
+                .reset_index()
+            )
+            fig = px.bar(
+                top_owners_capacity,
+                x="Total capacity (ttpa)",
+                y="Owner",
+                orientation="h",
+                title="Top companies by total capacity",
+            )
+            fig.update_layout(yaxis=dict(autorange="reversed"), height=350)
+            st.plotly_chart(fig, use_container_width=True)
+
+        with right:
+            fig = px.histogram(
+                filtered,
+                x=CAPACITY_COL,
+                nbins=30,
+                title="Capacity distribution",
+            )
+            fig.update_layout(height=350)
+            st.plotly_chart(fig, use_container_width=True)
+
+            fig = px.histogram(
+                filtered,
+                x="Plant age",
+                nbins=30,
+                title="Plant age distribution",
+            )
+            fig.update_layout(height=350)
+            st.plotly_chart(fig, use_container_width=True)
 
 with plant_tab:
     color_metric = st.radio(
