@@ -17,18 +17,6 @@ A data analysis lab that explores the location, capacity, and ownership of steel
 
 ---
 
-## What's in this repo
-
-| File | What it does |
-|---|---|
-| `lab_1.ipynb` | Main analysis notebook (Parts 1–6 + Bonus) |
-| `app.py` | Streamlit dashboard |
-| `requirements.txt` | Python dependencies |
-| `litpop/` | LitPop exposure data for China, India, Japan |
-| `*.csv` | Pre-computed outputs used by the dashboard |
-
----
-
 ## Prerequisites
 
 - Python 3.12 or later
